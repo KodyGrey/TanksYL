@@ -10,21 +10,19 @@ def read_map(file, N):
         objects = list(file.readline().split())
         for j in range(len(objects)):
             # Обычные объекты на поле
-            if objects[j] == 'r':
-                pass
             if objects[j] == 'b':
-                Tile((i, j), iron=False)
+                Tile((N - j - 1, N - i - 1), iron=False)
             if objects[j] == 'i':
-                Tile((i, j), iron=True)
+                Tile((N - j - 1, N - i - 1), iron=True)
             # Связанные объекты на поле, танки и базы
             if objects[j] == 'C1':
-                Tower((i, j), 1)
+                Tower((N - j - 1, N - i - 1), 1)
             if objects[j] == 'C2':
-                Tower((i, j), 2)
+                Tower((N - j - 1, N - i - 1), 2)
             if objects[j] == 'T1':
-                Tank((i * 50, j * 50), 1, (0, 1))
+                Tank((N - j - 1, N - i - 1), 1, (0, 1))
             if objects[j] == 'T2':
-                Tank((i * 50, j * 50), 2, (0, 1))
+                Tank((N - j - 1, N - i - 1), 2, (0, 1))
     return
 
 
