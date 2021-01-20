@@ -1,0 +1,17 @@
+r r r T1 r r r b C1 b r r r r r r r
+r r r r r r r b b b r r r r r r r
+r r r b r r r r r r r r r r r r r
+b b b b r r r r r r r r r r r r r
+r r r r r r r r i r r r r r r r r
+r r r r r r r r i r r r r r r r r
+r r r r r r r r i r r b r r r r b
+r b b b b i i i i i i i b b b b r
+b r r r r b r r i r r r r r r r r
+r r r r r r r r i r r r r r r r r
+r r r r r r r r i r r r r r r r r
+r r r r r r r r r r r r r r r r r
+r r r r r r r r r r r r r r r r r
+r r r r r r r r r r r r r b b b b
+r r r r r r r r r r r r r b r r r
+r r r r r r r b b b r r r r r r r
+r r r r r r r b C2 b r r r T2 r r r
