@@ -72,10 +72,10 @@ class Bullet(pg.sprite.Sprite):
 
 
 class Tank(pg.sprite.Sprite):
-    def __init__(self, coords, team):
+    def __init__(self, coords, team, direction):
         super().__init__(tanks, all_sprites)
         self.coords = coords
-        self.direction = (0, 1)
+        self.direction = direction
         self.ultimate = 0
         self.fast = 0
         if team == 1:
@@ -84,6 +84,12 @@ class Tank(pg.sprite.Sprite):
             self.image = load_image('Танк2.png')
         self.team = team
         self.hp = 3
+        if direction == (1, 0):
+            self.image = pg.transform.rotate(self.image, 90)
+        elif direction == (0, -1):
+            self.image = pg.transform.rotate(self.image, 180)
+        elif direction == (-1, 0):
+            self.image = pg.transform.rotate(self.image, 270)
 
 
 class Buster(pg.sprite.Sprite):
