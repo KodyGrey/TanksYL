@@ -36,6 +36,8 @@ tanks = pg.sprite.Group()
 busters = pg.sprite.Group()
 towers = pg.sprite.Group()
 
+winner = 0
+
 
 class Tile(pg.sprite.Sprite):
     destroyed = False
@@ -51,6 +53,17 @@ class Tile(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0] * 50
         self.rect.y = pos[1] * 50
+        self.mask = pg.mask.from_surface(self.image)
+
+    def update(self):
+        for bullet in bullets:
+            collide = pg.sprite.collide_mask(self, bullet)
+            if not collide is None:
+                if bullet.ultimate and not self.iron:
+                    bullet.update(crashed=True)
+                    tiles.remove(self)
+                    all_sprites.remove(self)
+                    break
 
 
 class Bullet(pg.sprite.Sprite):
@@ -69,12 +82,19 @@ class Bullet(pg.sprite.Sprite):
             self.image = pg.transform.rotate(self.image, 180)
         elif direction == (-1, 0):
             self.image = pg.transform.rotate(self.image, 270)
+        self.mask = pg.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.x = coords[0]
+        self.rect.y = coords[1]
+
+    def update(self, crashed=False):
+        pass
 
 
 class Tank(pg.sprite.Sprite):
-    def __init__(self, coords, team, direction):
+    def __init__(self, pos, team, direction):
         super().__init__(tanks, all_sprites)
-        self.coords = coords
+        self.pos = pos
         self.direction = direction
         self.ultimate = 0
         self.fast = 0
@@ -90,6 +110,19 @@ class Tank(pg.sprite.Sprite):
             self.image = pg.transform.rotate(self.image, 180)
         elif direction == (-1, 0):
             self.image = pg.transform.rotate(self.image, 270)
+        self.mask = pg.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0] * 50
+        self.rect.y = pos[1] * 50
+
+    def update(self, shoot=False, broken=False, direction=(0, 0)):
+        if broken:
+            self.hp -= 1
+            if self.hp == 0:
+                global winner
+                winner = self.team % 2 + 1
+        if shoot:
+            pass
 
 
 class Buster(pg.sprite.Sprite):
@@ -107,6 +140,10 @@ class Buster(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0] * 50
         self.rect.y = pos[1] * 50
+        self.mask = pg.mask.from_surface(self.image)
+
+    def update(self):
+        pass
 
 
 class Tower(pg.sprite.Sprite):
@@ -116,3 +153,10 @@ class Tower(pg.sprite.Sprite):
         self.team = team
         self.image = load_image('Целая_крепость.png')
         self.hp = 3
+        self.mask = pg.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0] * 50
+        self.rect.y = pos[1] * 50
+
+    def update(self):
+        pass
