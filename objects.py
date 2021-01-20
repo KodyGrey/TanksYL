@@ -58,7 +58,7 @@ class Tile(pg.sprite.Sprite):
     def update(self):
         for bullet in bullets:
             collide = pg.sprite.collide_mask(self, bullet)
-            if not collide is None:
+            if collide is not None:
                 if bullet.ultimate and not self.iron:
                     bullet.update(crashed=True)
                     tiles.remove(self)
@@ -88,7 +88,12 @@ class Bullet(pg.sprite.Sprite):
         self.rect.y = coords[1]
 
     def update(self, crashed=False):
-        pass
+        if crashed:
+            bullets.remove(self)
+            all_sprites.remove(self)
+        else:
+            self.rect.x += self.direction[0]
+            self.rect.y += self.direction[1]
 
 
 class Tank(pg.sprite.Sprite):
@@ -122,7 +127,22 @@ class Tank(pg.sprite.Sprite):
                 global winner
                 winner = self.team % 2 + 1
         if shoot:
-            pass
+            coords = ((self.pos[0] + self.direction[0]) * 50,
+                      (self.pos[1] + self.direction[1]) * 50)
+            if direction == (0, 1):
+                coords[0] += 23
+                coords[1] += 44 if self.ultimate == 0 else 42
+            elif direction == (1, 0):
+                coords[1] += 23
+            elif direction == (0, -1):
+                coords[0] += 23
+            elif direction == (-1, 0):
+                coords[0] += 44 if self.ultimate == 0 else 42
+                coords[1] += 23
+
+            bullet = Bullet(coords, self.direction,
+                            ultimate=True if self.ultimate > 0 else False)
+        # some for's
 
 
 class Buster(pg.sprite.Sprite):
@@ -142,8 +162,10 @@ class Buster(pg.sprite.Sprite):
         self.rect.y = pos[1] * 50
         self.mask = pg.mask.from_surface(self.image)
 
-    def update(self):
-        pass
+    def update(self, took=False):
+        if took:
+            busters.remove(self)
+            all_sprites.remove(self)
 
 
 class Tower(pg.sprite.Sprite):
@@ -159,4 +181,10 @@ class Tower(pg.sprite.Sprite):
         self.rect.y = pos[1] * 50
 
     def update(self):
-        pass
+        for bullet in bullets:
+            collide = pg.sprite.collide_mask(self, bullet)
+            if collide is not None:
+                bullet.update(crashed=True)
+                towers.remove(self)
+                all_sprites.remove(self)
+                break
