@@ -94,7 +94,6 @@ class Bullet(pg.sprite.Sprite):
             bullets.remove(self)
             all_sprites.remove(self)
         else:
-            print('fsssh')
             self.rect.x += self.direction[0] * 2
             self.rect.y -= self.direction[1] * 2
             if self.rect.x < 0 or self.rect.x + 50 > 850 or self.rect.y < 0 or self.rect.y + 50 > 850:

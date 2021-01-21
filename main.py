@@ -4,6 +4,7 @@
 import pygame as pg
 import random as rn
 from objects import *
+import objects
 
 
 def read_map(file, N):
@@ -62,8 +63,10 @@ pg.init()
 counter = 0
 
 SPAWNBUSTER = pg.USEREVENT + 1
+playing = True
 
 while running:
+
     if started:
         if started == 1:
             pg.time.set_timer(SPAWNBUSTER, 1 * 10 * 1000)
@@ -72,7 +75,8 @@ while running:
         for i in range(size):
             for j in range(size):
                 screen.blit(road, (i * 50, j * 50))
-        all_sprites.draw(screen)
+        if playing:
+            all_sprites.draw(screen)
 
     pressed = pg.key.get_pressed()
     if pressed[pg.K_w]:
@@ -105,6 +109,14 @@ while running:
             tanks.update(team=1, shoot=True)
         if event.type == pg.KEYDOWN and event.key == pg.K_m:
             tanks.update(team=2, shoot=True)
+
+    winner = objects.winner
+    if winner > 0:
+        playing = False
+        if winner == 1:
+            screen.blit(load_image('Победа_Зелёного.png'), (0, 0))
+        else:
+            screen.blit(load_image('Победа_Синего.png'), (0, 0))
 
     all_sprites.update()
     pg.display.flip()
