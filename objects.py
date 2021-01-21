@@ -97,6 +97,9 @@ class Bullet(pg.sprite.Sprite):
             print('fsssh')
             self.rect.x += self.direction[0] * 2
             self.rect.y -= self.direction[1] * 2
+            if self.rect.x < 0 or self.rect.x + 50 > 850 or self.rect.y < 0 or self.rect.y + 50 > 850:
+                bullets.remove(self)
+                all_sprites.remove(self)
 
 
 class Tank(pg.sprite.Sprite):
@@ -135,18 +138,19 @@ class Tank(pg.sprite.Sprite):
                     all_sprites.remove(self)
                 self.rect.x = self.pos[0] * 50
                 self.rect.y = self.pos[1] * 50
+                bullet.update(crashed=True)
         if self.team == team:
             if shoot:
                 coords = [self.rect.x,
-                          self.rect.y - 90]
+                          self.rect.y]
                 if self.direction == (0, 1):
-                    coords[1] += 44 if self.ultimate == 0 else 42
+                    coords[1] -= 30
                 elif self.direction == (1, 0):
-                    coords[1] += 23
+                    coords[0] += 30
                 elif self.direction == (0, -1):
-                    coords[0] += 0
+                    coords[1] += 30
                 elif self.direction == (-1, 0):
-                    coords[1] += 23
+                    coords[0] -= 30
                 bullet = Bullet(coords, self.direction,
                                 ultimate=True if self.ultimate > 0 else False)
             if direction != (0, 0) and direction != self.direction:
@@ -179,11 +183,11 @@ class Tank(pg.sprite.Sprite):
             collide = pg.sprite.collide_mask(self, buster)
             if collide is not None:
                 if buster.type == 1:
-                    self.fast += 3500 * 2
+                    self.fast += 1000
                 elif buster.type == 2:
                     self.hp += 1
                 elif buster.type == 3:
-                    self.ultimate = 3500 * 2
+                    self.ultimate = 1000
                 buster.update(took=True)
         if self.fast > 0:
             self.fast -= 1
