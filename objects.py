@@ -120,29 +120,59 @@ class Tank(pg.sprite.Sprite):
         self.rect.x = pos[0] * 50
         self.rect.y = pos[1] * 50
 
-    def update(self, shoot=False, broken=False, direction=(0, 0)):
-        if broken:
-            self.hp -= 1
-            if self.hp == 0:
-                global winner
-                winner = self.team % 2 + 1
-        if shoot:
-            coords = ((self.pos[0] + self.direction[0]) * 50,
-                      (self.pos[1] + self.direction[1]) * 50)
-            if direction == (0, 1):
-                coords[0] += 23
-                coords[1] += 44 if self.ultimate == 0 else 42
-            elif direction == (1, 0):
-                coords[1] += 23
-            elif direction == (0, -1):
-                coords[0] += 23
-            elif direction == (-1, 0):
-                coords[0] += 44 if self.ultimate == 0 else 42
-                coords[1] += 23
+    def update(self, shoot=False, direction=(0, 0), team=None):
+        for bullet in bullets:
+            collide = pg.sprite.collide_mask(self, bullet)
+            if collide is not None:
+                self.hp -= 1
+                if self.hp <= 0:
+                    global winner
+                    winner = self.team % 2 + 1
+                    tanks.remove(self)
+                    all_sprites.remove(self)
+                self.rect.x = self.pos[0] * 50
+                self.rect.y = self.pos[1] * 50
+        if self.team == team:
+            if shoot:
+                coords = ((self.pos[0] + self.direction[0]) * 50,
+                          (self.pos[1] + self.direction[1]) * 50)
+                if self.direction == (0, 1):
+                    coords[0] += 23
+                    coords[1] += 44 if self.ultimate == 0 else 42
+                elif self.direction == (1, 0):
+                    coords[1] += 23
+                elif self.direction == (0, -1):
+                    coords[0] += 23
+                elif self.direction == (-1, 0):
+                    coords[0] += 44 if self.ultimate == 0 else 42
+                    coords[1] += 23
 
-            bullet = Bullet(coords, self.direction,
-                            ultimate=True if self.ultimate > 0 else False)
-        # some for's
+                bullet = Bullet(coords, self.direction,
+                                ultimate=True if self.ultimate > 0 else False)
+            if direction != (0, 0) and direction != self.direction:
+                if self.team == 1:
+                    self.image = load_image('Танк1.png')
+                elif self.team == 2:
+                    self.image = load_image('Танк2.png')
+                if direction == (1, 0):
+                    self.image = pg.transform.rotate(self.image, 90)
+                elif direction == (0, -1):
+                    self.image = pg.transform.rotate(self.image, 180)
+                elif direction == (-1, 0):
+                    self.image = pg.transform.rotate(self.image, 270)
+            elif direction == self.direction:
+                self.rect.x += direction[0] * 2 if self.fast > 0 else direction[0]
+                self.rect.y -= direction[1] * 2 if self.fast > 0 else direction[1]
+        for buster in busters:
+            collide = pg.sprite.collide_mask(self, buster)
+            if collide is not None:
+                if buster.type == 1:
+                    self.fast += 3500
+                elif buster.type == 2:
+                    self.hp += 1
+                elif buster.type == 3:
+                    self.ultimate = 3500
+                buster.update(took=True)
 
 
 class Buster(pg.sprite.Sprite):
@@ -185,6 +215,8 @@ class Tower(pg.sprite.Sprite):
             collide = pg.sprite.collide_mask(self, bullet)
             if collide is not None:
                 bullet.update(crashed=True)
-                towers.remove(self)
-                all_sprites.remove(self)
-                break
+                self.hp -= 1
+        if self.hp <= 0:
+            global winner
+            winner = self.team % 2 + 1
+
