@@ -236,7 +236,12 @@ class Tower(pg.sprite.Sprite):
             if collide is not None:
                 bullet.update(crashed=True)
                 self.hp -= 1
+        if self.hp == 2:
+            self.image = load_image('Полуразрушенная_крепость.png')
+        elif self.hp == 1:
+            self.image = load_image('Очень_разрушенная_крепость.png')
         if self.hp <= 0:
+            self.image = load_image('Разрушенная_крепость.png')
             global winner
             winner = self.team % 2 + 1
 
