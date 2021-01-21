@@ -66,14 +66,32 @@ SPAWNBUSTER = pg.USEREVENT + 1
 while running:
     if started:
         if started == 1:
-            started = 2
-            road = load_image('дорога.png')
-            for i in range(size):
-                for j in range(size):
-                    screen.blit(road, (i * 50, j * 50))
-            pg.time.set_timer(SPAWNBUSTER, 2 * 60 * 1000)
+            pg.time.set_timer(SPAWNBUSTER, 1 * 10 * 1000)
+        started = 2
+        road = load_image('дорога.png')
+        for i in range(size):
+            for j in range(size):
+                screen.blit(road, (i * 50, j * 50))
         all_sprites.draw(screen)
-        pg.display.flip()
+
+    pressed = pg.key.get_pressed()
+    if pressed[pg.K_w]:
+        tanks.update(team=1, direction=(0, 1))
+    elif pressed[pg.K_d]:
+        tanks.update(team=1, direction=(1, 0))
+    elif pressed[pg.K_s]:
+        tanks.update(team=1, direction=(0, -1))
+    elif pressed[pg.K_a]:
+        tanks.update(team=1, direction=(-1, 0))
+
+    if pressed[pg.K_UP]:
+        tanks.update(team=2, direction=(0, 1))
+    elif pressed[pg.K_RIGHT]:
+        tanks.update(team=2, direction=(1, 0))
+    elif pressed[pg.K_DOWN]:
+        tanks.update(team=2, direction=(0, -1))
+    elif pressed[pg.K_LEFT]:
+        tanks.update(team=2, direction=(-1, 0))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -83,10 +101,11 @@ while running:
             started = 1
         if event.type == SPAWNBUSTER:
             spawn_buster('levels/level1.txt', size)
-        if event.type == pg.KEYDOWN:
-            if event.key in [pg.K_w, pg.K_UP]:
-                team = 1 if event.key == pg.K_w else 2
-                tanks.update(team=team, direction=(0, 1))
+        if event.type == pg.KEYDOWN and event.key == pg.K_f:
+            tanks.update(team=1, shoot=True)
+        if event.type == pg.KEYDOWN and event.key == pg.K_m:
+            tanks.update(team=2, shoot=True)
 
-    all_sprites.draw(screen)
+    all_sprites.update()
+    pg.display.flip()
     clock.tick(fps)
